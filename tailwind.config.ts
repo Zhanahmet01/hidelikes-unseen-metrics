@@ -17,10 +17,15 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          secondary: "hsl(var(--background-secondary))",
+        },
         foreground: "hsl(var(--foreground))",
+        hover: "hsl(var(--hover))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          hover: "hsl(var(--primary-hover))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -47,21 +52,32 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        text: {
+          main: "hsl(var(--text-main))",
+          secondary: "hsl(var(--text-secondary))",
+          muted: "hsl(var(--text-muted))",
         },
       },
       borderRadius: {
         lg: "var(--radius)",
+        card: "var(--radius-card)",
+        modal: "var(--radius-modal)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        card: "var(--shadow-card)",
+        button: "var(--shadow-button)",
+        modal: "var(--shadow-modal)",
+      },
+      spacing: {
+        '4.5': '1.125rem',
+      },
+      fontSize: {
+        'display': ['3rem', { lineHeight: '1.2', fontWeight: '600' }],
+        'page-title': ['2rem', { lineHeight: '1.25', fontWeight: '600' }],
+        'section-title': ['1.5rem', { lineHeight: '1.3', fontWeight: '500' }],
       },
       keyframes: {
         "accordion-down": {

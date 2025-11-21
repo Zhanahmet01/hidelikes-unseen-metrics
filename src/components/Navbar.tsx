@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Home, PlusSquare, User, Search, Settings } from "lucide-react";
+import { Home, PlusSquare, User, Search, Settings, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 
@@ -33,6 +33,15 @@ export const Navbar = () => {
           >
             <PlusSquare className="w-5 h-5" />
             <span>Create</span>
+          </NavLink>
+
+          <NavLink
+            to="/chat"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-text-secondary hover:bg-hover hover:text-foreground transition-all"
+            activeClassName="bg-hover text-foreground font-medium"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span>Chat</span>
           </NavLink>
 
           <NavLink

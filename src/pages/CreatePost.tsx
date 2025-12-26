@@ -4,16 +4,22 @@ import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, Loader2 } from "lucide-react";
+import { usePosts } from "@/hooks/usePosts";
+import { toast } from "sonner";
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const { createPost } = usePosts();
   const [caption, setCaption] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -22,10 +28,20 @@ const CreatePost = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock post creation
-    navigate("/feed");
+    if (!imageFile) return;
+
+    setLoading(true);
+    const { error } = await createPost(imageFile, caption);
+    setLoading(false);
+
+    if (error) {
+      toast.error("Ошибка при создании поста");
+    } else {
+      toast.success("Пост опубликован!");
+      navigate("/feed");
+    }
   };
 
   return (
@@ -35,12 +51,12 @@ const CreatePost = () => {
       <main className="container-main py-8">
         <div className="max-w-2xl mx-auto animate-fade-in">
           <div className="bg-card rounded-card shadow-card p-8">
-            <h1 className="text-page-title mb-8">Create New Post</h1>
+            <h1 className="text-page-title mb-8">Новый пост</h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Image Upload */}
               <div className="space-y-2">
-                <Label>Photo</Label>
+                <Label>Фото</Label>
                 {imagePreview ? (
                   <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
                     <img
@@ -50,7 +66,10 @@ const CreatePost = () => {
                     />
                     <button
                       type="button"
-                      onClick={() => setImagePreview(null)}
+                      onClick={() => {
+                        setImagePreview(null);
+                        setImageFile(null);
+                      }}
                       className="absolute top-4 right-4 w-10 h-10 rounded-full bg-card/90 backdrop-blur flex items-center justify-center hover:bg-card transition-colors shadow-card"
                     >
                       <X className="w-5 h-5" />
@@ -63,9 +82,9 @@ const CreatePost = () => {
                         <ImagePlus className="w-8 h-8 text-primary" />
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-foreground">Upload a photo</p>
+                        <p className="font-medium text-foreground">Загрузить фото</p>
                         <p className="text-sm text-text-secondary mt-1">
-                          Click to browse or drag and drop
+                          Нажмите для выбора
                         </p>
                       </div>
                     </div>
@@ -81,12 +100,12 @@ const CreatePost = () => {
 
               {/* Caption */}
               <div className="space-y-2">
-                <Label htmlFor="caption">Caption</Label>
+                <Label htmlFor="caption">Подпись</Label>
                 <Textarea
                   id="caption"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
-                  placeholder="Write a caption..."
+                  placeholder="Добавьте подпись..."
                   rows={4}
                   className="resize-none"
                 />
@@ -97,9 +116,16 @@ const CreatePost = () => {
                 <Button
                   type="submit"
                   className="flex-1"
-                  disabled={!imagePreview}
+                  disabled={!imageFile || loading}
                 >
-                  Share Post
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Публикация...
+                    </>
+                  ) : (
+                    "Опубликовать"
+                  )}
                 </Button>
                 <Button
                   type="button"
@@ -107,7 +133,7 @@ const CreatePost = () => {
                   onClick={() => navigate("/feed")}
                   className="flex-1"
                 >
-                  Cancel
+                  Отмена
                 </Button>
               </div>
             </form>

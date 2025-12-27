@@ -32,25 +32,23 @@ export const useProfile = (userId?: string) => {
           .from("profiles")
           .select("*")
           .eq("user_id", targetUserId)
-          .single();
+          .maybeSingle();
 
-        if (error) {
-          if (error.code === "PGRST116") {
-            // Profile doesn't exist, create one
-            const { data: newProfile, error: createError } = await supabase
-              .from("profiles")
-              .insert({
-                user_id: targetUserId,
-                username: `user_${targetUserId.slice(0, 8)}`,
-              })
-              .select()
-              .single();
+        if (error) throw error;
 
-            if (createError) throw createError;
-            setProfile(newProfile);
-          } else {
-            throw error;
-          }
+        if (!data) {
+          // Profile doesn't exist, create one
+          const { data: newProfile, error: createError } = await supabase
+            .from("profiles")
+            .insert({
+              user_id: targetUserId,
+              username: `user_${targetUserId.slice(0, 8)}`,
+            })
+            .select()
+            .single();
+
+          if (createError) throw createError;
+          setProfile(newProfile);
         } else {
           setProfile(data);
         }

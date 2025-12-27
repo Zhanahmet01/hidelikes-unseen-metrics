@@ -32,7 +32,7 @@ const Feed = () => {
             >
               <PostCard
                 id={post.id}
-                username={post.profile?.username || "Unknown"}
+                username={post.profile?.username || "Пользователь"}
                 avatar={post.profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.user_id}`}
                 image={post.image_url}
                 caption={post.caption || ""}
@@ -40,6 +40,7 @@ const Feed = () => {
                   addSuffix: true,
                   locale: ru,
                 })}
+                userId={post.user_id}
               />
             </div>
           ))

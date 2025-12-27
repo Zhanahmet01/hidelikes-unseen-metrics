@@ -28,10 +28,15 @@ All colors MUST be HSL.
     --primary: 245 81% 64%; /* #5B5BEA */
     --primary-hover: 245 77% 59%; /* #4D4DD8 */
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 245 81% 74%;
     
     /* Secondary Accent */
     --secondary: 252 100% 66%; /* #6A4CFF */
     --secondary-foreground: 0 0% 100%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(245 81% 64%), hsl(252 100% 66%));
+    --gradient-hero: linear-gradient(135deg, hsl(245 81% 64% / 0.1), hsl(252 100% 66% / 0.1));
 
     /* Text Colors */
     --text-main: 0 0% 5%; /* #0D0D0D */

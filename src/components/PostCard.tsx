@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark } from "lucide-react";
+import { Bookmark, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PostActions } from "@/components/PostActions";
+import { CommentsSection } from "@/components/CommentsSection";
+import { useComments } from "@/hooks/useComments";
 
 interface PostCardProps {
   id: string;
@@ -10,17 +14,23 @@ interface PostCardProps {
   image: string;
   caption: string;
   timestamp: string;
+  userId?: string;
 }
 
-export const PostCard = ({ id, username, avatar, image, caption, timestamp }: PostCardProps) => {
+export const PostCard = ({ id, username, avatar, image, caption, timestamp, userId }: PostCardProps) => {
+  const [showComments, setShowComments] = useState(false);
+  const { commentsCount } = useComments(id);
+
   return (
     <article className="bg-card rounded-card shadow-card overflow-hidden hover-lift">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border">
-        <Link to={`/profile/${username}`} className="flex items-center gap-3 flex-1">
+        <Link to={userId ? `/profile/${userId}` : "#"} className="flex items-center gap-3 flex-1">
           <Avatar className="w-10 h-10">
             <AvatarImage src={avatar} alt={username} />
-            <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>
+              <User className="w-5 h-5" />
+            </AvatarFallback>
           </Avatar>
           <div>
             <p className="font-medium text-foreground hover:underline">{username}</p>
@@ -41,36 +51,42 @@ export const PostCard = ({ id, username, avatar, image, caption, timestamp }: Po
       </Link>
 
       {/* Actions */}
-      <div className="p-4 space-y-3">
+      <div className="px-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="hover:text-primary">
-              <Heart className="w-6 h-6" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover:text-primary">
-              <MessageCircle className="w-6 h-6" />
-            </Button>
-          </div>
+          <PostActions 
+            postId={id} 
+            commentsCount={commentsCount}
+            onCommentClick={() => setShowComments(!showComments)}
+          />
           <Button variant="ghost" size="icon" className="hover:text-primary">
             <Bookmark className="w-6 h-6" />
           </Button>
         </div>
 
         {/* Caption */}
-        <div className="space-y-1">
+        <div className="space-y-1 pb-3">
           <p className="text-sm">
-            <Link to={`/profile/${username}`} className="font-medium hover:underline mr-2">
+            <Link to={userId ? `/profile/${userId}` : "#"} className="font-medium hover:underline mr-2">
               {username}
             </Link>
             <span className="text-text-secondary">{caption}</span>
           </p>
-          <Link
-            to={`/post/${id}`}
-            className="text-sm text-text-muted hover:text-text-secondary"
-          >
-            View all comments
-          </Link>
+          {commentsCount > 0 && !showComments && (
+            <button
+              onClick={() => setShowComments(true)}
+              className="text-sm text-text-muted hover:text-text-secondary"
+            >
+              Показать все комментарии ({commentsCount})
+            </button>
+          )}
         </div>
+
+        {/* Comments Section */}
+        {showComments && (
+          <div className="pb-4 border-t border-border pt-4">
+            <CommentsSection postId={id} />
+          </div>
+        )}
       </div>
     </article>
   );
